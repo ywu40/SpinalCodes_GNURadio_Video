@@ -1,0 +1,29 @@
+In these codes, we show how to port the original spinal codes into GNURadio and USRP board. Meanwhile, we show how to modify the original APIs of spinal codes to make them be suitable to transmit H.264 video data. The codes of this project are based on the following links:
+
+http://www.yonch.com/wireless
+https://github.com/qinchenchong/spinal_usrp
+
+Before using the codes in this project, please make sure that you have installed the Spinal codes. How to install the spinal codes, please refer to:
+http://www.yonch.com/wireless
+
+In our demo, we realtime capture the video data from the camera and compress the video data into H.264 bitstream. Then we realtime transmit the H.264 bitstream over wireless network by using GNURadio and USRP board. At the receiving side, we realtie decode the received H.264 bitsteam and show them on the screen by using ffplay.
+
+Note: Please run the commands at the receiving side first, then run the commands at the sender side.
+
+Receiver side:
+1) ffplay -f mpegts udp://127.0.0.1:12346
+
+2) python packet_transceiver.py --receiveport 12345 --sendport 12346
+
+packet_transceiver.py can be found under GNURadio installing directory gnuradio/gr-digital/examples/narrowband
+
+3) python wyq_spinal_video_rx.py --tx-freq=922M --rx-freq=908020000 --rx-gain=30 --tx-gain=30 --tx-amplitude=1
+
+
+
+Sender Side:
+1) ffmpeg -f video4linux2 -b:v 32k -s 320*240 -r 64 -i /dev/video0 -vcodec libx264 -tune zerolatency -y -f mpegts udp://127.0.0.1:12347
+
+2) python wyq_spinal_video_tx.py --tx-freq=908M --rx-freq=921975000 --rx-gain=30 --tx-gain=30 --tx-amplitude=1
+
+The meaning of each command line options, please refer to GNURadio official guideling document.
